@@ -10,6 +10,7 @@ import (
 	"os/exec"
 	"regexp"
 	"runtime"
+	"time"
 )
 
 const (
@@ -20,6 +21,11 @@ const (
 var client = http.DefaultClient
 
 func main() {
+	run()
+	time.Sleep(time.Second * 10)
+}
+
+func run() {
 	scanner := bufio.NewScanner(os.Stdin)
 	for scanner.Scan() {
 
