@@ -10,6 +10,7 @@ import (
 	"os/exec"
 	"regexp"
 	"runtime"
+	"strings"
 )
 
 const (
@@ -31,17 +32,20 @@ func run() {
 		if topic == "" {
 			panic("invalid topic")
 		}
-		var cmd *exec.Cmd
+
 		url := fmt.Sprintf("%s=%s", baseTaskURL, topic)
 
+		var cmd *exec.Cmd
 		switch runtime.GOOS {
 		case "windows":
-			cmd = exec.Command("explorer", url)
+			// cmd does not accept raw ampersants
+			winURL := strings.ReplaceAll(url, "&", "^&")
+			cmd = exec.Command("cmd", "/c", "start", winURL)
 		case "linux":
 			cmd = exec.Command("xdg-open", url)
 		}
 
-		err := cmd.Run()
+		err := cmd.Start()
 		if err != nil {
 			log.Fatalf("could not start browser: %v", err)
 		}
@@ -69,7 +73,7 @@ func run() {
 
 		saveFile(fname, fileData)
 
-		fmt.Printf("file has saved under: %s", fname)
+		fmt.Printf("file has saved: %s\n", fname)
 	}
 
 }
@@ -91,7 +95,7 @@ func fetchFile(url string) ([]byte, error) {
 }
 
 func saveFile(name string, data []byte) error {
-	return os.WriteFile(name, data, 0666)
+	return os.WriteFile(name, data, 0777)
 }
 
 func fetchPage(url string) (string, error) {
