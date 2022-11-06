@@ -10,7 +10,6 @@ import (
 	"os/exec"
 	"regexp"
 	"runtime"
-	"time"
 )
 
 const (
@@ -22,7 +21,6 @@ var client = http.DefaultClient
 
 func main() {
 	run()
-	time.Sleep(time.Second * 10)
 }
 
 func run() {
@@ -38,8 +36,7 @@ func run() {
 
 		switch runtime.GOOS {
 		case "windows":
-			winargs := []string{"cmd", "/c", "start"}
-			cmd = exec.Command(winargs[0], append(winargs[1:], url)...)
+			cmd = exec.Command("explorer", url)
 		case "linux":
 			cmd = exec.Command("xdg-open", url)
 		}
